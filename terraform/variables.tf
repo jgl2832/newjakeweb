@@ -7,7 +7,7 @@ variable "aws_region" {
 variable "project_name" {
   description = "Unique name used to namespace all resources"
   type        = string
-  default     = "jake-levine-site"
+  default     = "jakeglevine-web"
 }
 
 variable "domain_name" {

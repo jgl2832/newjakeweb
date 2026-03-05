@@ -56,14 +56,14 @@ Terraform state is stored in S3:
 
 | Setting | Value |
 |---|---|
-| Bucket | `jgl2832-terraform-state` |
+| Bucket | `terraform-state-jgl2832` |
 | Key | `jake-levine-site/terraform.tfstate` |
 | Region | `eu-central-1` |
 
 The state bucket must exist before running `terraform init`. Create it once manually if it doesn't already exist:
 
 ```bash
-aws s3 mb s3://jgl2832-terraform-state --region eu-central-1
+aws s3 mb s3://terraform-state-jgl2832 --region eu-central-1
 ```
 
 ### Provision

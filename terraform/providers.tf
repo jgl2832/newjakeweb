@@ -9,7 +9,7 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "jgl2832-terraform-state"
+    bucket = "terraform-state-jgl2832"
     key    = "jake-levine-site/terraform.tfstate"
     region = "eu-central-1"
   }
