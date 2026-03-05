@@ -1,13 +1,6 @@
 name: Infrastructure
 
 on:
-  # Run automatically when Terraform files change on main
-  push:
-    branches: [main]
-    paths:
-      - 'terraform/**'
-
-  # Also allow a manual run with a choice of plan-only or full apply
   workflow_dispatch:
     inputs:
       action:
@@ -25,7 +18,7 @@ env:
 
 jobs:
   terraform:
-    name: Terraform ${{ github.event.inputs.action || 'apply' }}
+    name: Terraform ${{ github.event.inputs.action }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -65,14 +58,13 @@ jobs:
         env:
           TF_VAR_domain_name: ${{ secrets.DOMAIN_NAME }}
 
-      # Apply only on a push to main, or when explicitly chosen via workflow_dispatch
       - name: Terraform apply
-        if: github.event_name == 'push' || github.event.inputs.action == 'apply'
+        if: github.event.inputs.action == 'apply'
         run: terraform apply -input=false tfplan
 
       # Print outputs so you can copy bucket name / distribution ID into secrets
       - name: Show outputs
-        if: github.event_name == 'push' || github.event.inputs.action == 'apply'
+        if: github.event.inputs.action == 'apply'
         run: |
           echo "### Terraform Outputs" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY

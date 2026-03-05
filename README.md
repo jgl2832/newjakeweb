@@ -119,19 +119,13 @@ Set these in **Settings → Secrets and variables → Actions** on the repo:
 
 ### `infra.yml` — Infrastructure
 
-| Trigger | Behaviour |
-|---|---|
-| Push to `main` with changes in `terraform/**` | Runs `plan` then `apply` |
-| `workflow_dispatch` | Choose `plan` or `apply` manually |
+Triggered manually via `workflow_dispatch`. Choose `plan` or `apply` when running.
 
-Steps: fmt check → init → validate → plan → apply (on main or when chosen).
+Steps: fmt check → init → validate → plan → apply (when `apply` is chosen).
 
 ### `deploy.yml` — Site deploy
 
-| Trigger | Behaviour |
-|---|---|
-| Push to `main` with changes in `src/**`, `index.html`, `vite.config.js`, `package*.json` | Full deploy |
-| `workflow_dispatch` | Manual deploy |
+Triggered manually via `workflow_dispatch`.
 
 Steps: install → build → S3 sync (hashed assets immutable, `index.html` no-cache) → CloudFront invalidation.
 

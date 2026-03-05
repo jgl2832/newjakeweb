@@ -1,17 +1,6 @@
 name: Deploy
 
 on:
-  # Run automatically when app source changes on main
-  push:
-    branches: [main]
-    paths:
-      - 'src/**'
-      - 'index.html'
-      - 'vite.config.js'
-      - 'package.json'
-      - 'package-lock.json'
-
-  # Also allow a manual trigger
   workflow_dispatch:
 
 jobs:
