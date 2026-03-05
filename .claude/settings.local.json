@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.linkedin.com)",
+      "Bash(npm create vite@latest . -- --template react)",
+      "Bash(npm install)",
+      "mcp__Claude_Preview__preview_start"
+    ]
+  }
+}

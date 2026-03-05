@@ -1,0 +1,83 @@
+name: Infrastructure
+
+on:
+  # Run automatically when Terraform files change on main
+  push:
+    branches: [main]
+    paths:
+      - 'terraform/**'
+
+  # Also allow a manual run with a choice of plan-only or full apply
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Terraform action to run'
+        required: true
+        default: 'plan'
+        type: choice
+        options:
+          - plan
+          - apply
+
+env:
+  TF_VERSION: '1.8.0'
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+
+jobs:
+  terraform:
+    name: Terraform ${{ github.event.inputs.action || 'apply' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: terraform
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region:            ${{ secrets.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform fmt check
+        run: terraform fmt -check -recursive
+
+      - name: Terraform init
+        run: terraform init
+
+      - name: Terraform validate
+        run: terraform validate
+
+      - name: Terraform plan
+        id: plan
+        run: terraform plan -out=tfplan -input=false
+        env:
+          TF_VAR_domain_name: ${{ secrets.DOMAIN_NAME }}
+
+      # Apply only on a push to main, or when explicitly chosen via workflow_dispatch
+      - name: Terraform apply
+        if: github.event_name == 'push' || github.event.inputs.action == 'apply'
+        run: terraform apply -input=false tfplan
+
+      # Print outputs so you can copy bucket name / distribution ID into secrets
+      - name: Show outputs
+        if: github.event_name == 'push' || github.event.inputs.action == 'apply'
+        run: |
+          echo "### Terraform Outputs" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          terraform output >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Copy \`s3_bucket_name\` and \`cloudfront_distribution_id\` into your repo secrets" \
+               "(**S3_BUCKET_NAME** and **CF_DISTRIBUTION_ID**) if not already set." >> $GITHUB_STEP_SUMMARY
