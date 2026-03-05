@@ -121,7 +121,7 @@ Both workflows use the `prod` GitHub environment. Set these secrets in **Setting
 
 Triggered manually via `workflow_dispatch`. Choose `plan` or `apply` when running.
 
-Steps: fmt check → init → validate → plan → apply (when `apply` is chosen).
+Steps: init → validate → plan → apply (when `apply` is chosen).
 
 ### `deploy.yml` — Site deploy
 
