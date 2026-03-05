@@ -7,6 +7,7 @@ jobs:
   deploy:
     name: Build & deploy to S3
     runs-on: ubuntu-latest
+    environment: prod
 
     permissions:
       contents: read

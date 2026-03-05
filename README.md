@@ -104,7 +104,7 @@ Two workflows automate the full lifecycle from a push to `main`.
 
 ### Required secrets
 
-Set these in **Settings → Secrets and variables → Actions** on the repo:
+Both workflows use the `prod` GitHub environment. Set these secrets in **Settings → Environments → prod**:
 
 | Secret | Description |
 |---|---|
