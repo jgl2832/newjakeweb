@@ -7,6 +7,12 @@ terraform {
       version = "~> 5.0"
     }
   }
+
+  backend "s3" {
+    bucket = "jgl2832-terraform-state"
+    key    = "jake-levine-site/terraform.tfstate"
+    region = "eu-central-1"
+  }
 }
 
 provider "aws" {

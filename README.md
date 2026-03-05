@@ -50,6 +50,22 @@ AWS resources are managed with Terraform. All credentials are read from environm
 - [Terraform](https://developer.hashicorp.com/terraform/install) >= 1.6
 - [AWS CLI](https://aws.amazon.com/cli/) configured or credentials exported
 
+### Remote state
+
+Terraform state is stored in S3:
+
+| Setting | Value |
+|---|---|
+| Bucket | `jgl2832-terraform-state` |
+| Key | `jake-levine-site/terraform.tfstate` |
+| Region | `eu-central-1` |
+
+The state bucket must exist before running `terraform init`. Create it once manually if it doesn't already exist:
+
+```bash
+aws s3 mb s3://jgl2832-terraform-state --region eu-central-1
+```
+
 ### Provision
 
 ```bash
