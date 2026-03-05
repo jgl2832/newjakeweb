@@ -113,7 +113,7 @@ export default function App() {
               Previously at Meetup and GetYourGuide. Speaker at Codemotion Berlin 2019.
             </p>
             <div className="links">
-              <a href="https://github.com/jakeglevine" target="_blank" rel="noreferrer">GitHub</a>
+              <a href="https://github.com/jgl2832" target="_blank" rel="noreferrer">GitHub</a>
               <a href="https://linkedin.com/in/jakeglevine" target="_blank" rel="noreferrer">LinkedIn</a>
             </div>
           </div>

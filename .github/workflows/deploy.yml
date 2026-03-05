@@ -1,6 +1,15 @@
 name: Deploy
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'index.html'
+      - 'vite.config.js'
+      - 'package.json'
+      - 'package-lock.json'
+
   workflow_dispatch:
 
 jobs:

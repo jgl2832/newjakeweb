@@ -135,13 +135,19 @@ Both workflows use the `prod` GitHub environment. Set these secrets in **Setting
 
 ### `infra.yml` — Infrastructure
 
-Triggered manually via `workflow_dispatch`. Choose `plan` or `apply` when running.
+| Trigger | Behaviour |
+|---|---|
+| Push to `main` with changes in `terraform/**` | Runs plan then auto-applies |
+| `workflow_dispatch` | Choose `plan` or `apply` manually |
 
-Steps: init → validate → plan → apply (when `apply` is chosen).
+Steps: init → validate → plan → apply.
 
 ### `deploy.yml` — Site deploy
 
-Triggered manually via `workflow_dispatch`.
+| Trigger | Behaviour |
+|---|---|
+| Push to `main` with changes in `src/**`, `index.html`, `vite.config.js`, `package*.json` | Full deploy |
+| `workflow_dispatch` | Manual deploy |
 
 Steps: install → build → S3 sync (hashed assets immutable, `index.html` no-cache) → CloudFront invalidation.
 
@@ -149,11 +155,11 @@ Steps: install → build → S3 sync (hashed assets immutable, `index.html` no-c
 
 ```
 1. Push repo to GitHub
-2. Add AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION secrets
+2. Add AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION secrets to the prod environment
 3. Run the Infrastructure workflow manually (action: apply)
 4. Copy s3_bucket_name and cloudfront_distribution_id from the job summary
-5. Add S3_BUCKET_NAME and CF_DISTRIBUTION_ID secrets
-6. Push a change to src/ — Deploy workflow runs automatically
+5. Add S3_BUCKET_NAME and CF_DISTRIBUTION_ID secrets to the prod environment
+6. From now on: merging to main auto-applies infra changes and auto-deploys the site
 ```
 
 ---

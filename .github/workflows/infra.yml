@@ -1,6 +1,11 @@
 name: Infrastructure
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'terraform/**'
+
   workflow_dispatch:
     inputs:
       action:
@@ -18,7 +23,7 @@ env:
 
 jobs:
   terraform:
-    name: Terraform ${{ github.event.inputs.action }}
+    name: Terraform ${{ github.event.inputs.action || 'apply' }}
     runs-on: ubuntu-latest
     environment: prod
     defaults:
@@ -52,17 +57,24 @@ jobs:
 
       - name: Terraform plan
         id: plan
-        run: terraform plan -out=tfplan -input=false
+        run: |
+          set +e
+          terraform plan -detailed-exitcode -out=tfplan -input=false
+          EXIT_CODE=$?
+          set -e
+          # Exit 1 = error, exit 2 = changes present, exit 0 = no changes
+          if [ $EXIT_CODE -eq 1 ]; then exit 1; fi
+          echo "has_changes=$([ $EXIT_CODE -eq 2 ] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
         env:
           TF_VAR_domain_name: ${{ secrets.DOMAIN_NAME }}
 
       - name: Terraform apply
-        if: github.event.inputs.action == 'apply'
+        if: steps.plan.outputs.has_changes == 'true' && (github.event_name == 'push' || github.event.inputs.action == 'apply')
         run: terraform apply -input=false tfplan
 
       # Print outputs so you can copy bucket name / distribution ID into secrets
       - name: Show outputs
-        if: github.event.inputs.action == 'apply'
+        if: steps.plan.outputs.has_changes == 'true' && (github.event_name == 'push' || github.event.inputs.action == 'apply')
         run: |
           echo "### Terraform Outputs" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
